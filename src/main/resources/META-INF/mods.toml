@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+authors="Tieso2001"
+
+[[mods]]
+modId="quenched"
+version="${file.jarVersion}"
+displayName="Quenched"
+description='''
+    Thirst mechanics'''
+
+[[dependencies.quenched]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.15.2]"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.quenched]]
+modId="forge"
+mandatory=true
+versionRange="[31,)"
+ordering="NONE"
+side="BOTH"
