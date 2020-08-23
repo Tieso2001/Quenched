@@ -28,5 +28,4 @@ public final class Quenched {
         CapabilityManager.INSTANCE.register(IThirst.class, new ThirstStorage(), Thirst::new);
         PacketHandler.register();
     }
-
 }
