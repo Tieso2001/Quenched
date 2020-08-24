@@ -1,4 +1,4 @@
-package net.tieso2001.quenched.capability;
+package net.tieso2001.quenched.capability.entity;
 
 public interface IThirst {
 

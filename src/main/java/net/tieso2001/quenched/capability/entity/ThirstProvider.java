@@ -1,4 +1,4 @@
-package net.tieso2001.quenched.capability;
+package net.tieso2001.quenched.capability.entity;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;

@@ -11,8 +11,8 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.tieso2001.quenched.Quenched;
-import net.tieso2001.quenched.capability.IThirst;
-import net.tieso2001.quenched.capability.Thirst;
+import net.tieso2001.quenched.capability.entity.IThirst;
+import net.tieso2001.quenched.capability.entity.Thirst;
 
 import java.awt.*;
 

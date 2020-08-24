@@ -5,9 +5,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.tieso2001.quenched.capability.IThirst;
-import net.tieso2001.quenched.capability.Thirst;
-import net.tieso2001.quenched.capability.ThirstProvider;
+import net.tieso2001.quenched.capability.entity.IThirst;
+import net.tieso2001.quenched.capability.entity.Thirst;
+import net.tieso2001.quenched.capability.entity.ThirstProvider;
 
 import java.util.function.Supplier;
 

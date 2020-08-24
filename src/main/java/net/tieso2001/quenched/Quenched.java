@@ -5,9 +5,12 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.tieso2001.quenched.capability.IThirst;
-import net.tieso2001.quenched.capability.Thirst;
-import net.tieso2001.quenched.capability.ThirstStorage;
+import net.tieso2001.quenched.capability.entity.IThirst;
+import net.tieso2001.quenched.capability.entity.Thirst;
+import net.tieso2001.quenched.capability.entity.ThirstStorage;
+import net.tieso2001.quenched.capability.item.IItemThirst;
+import net.tieso2001.quenched.capability.item.ItemThirst;
+import net.tieso2001.quenched.capability.item.ItemThirstStorage;
 import net.tieso2001.quenched.network.PacketHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +29,7 @@ public final class Quenched {
 
     private void setup(final FMLCommonSetupEvent event) {
         CapabilityManager.INSTANCE.register(IThirst.class, new ThirstStorage(), Thirst::new);
+        CapabilityManager.INSTANCE.register(IItemThirst.class, new ItemThirstStorage(), ItemThirst::new);
         PacketHandler.register();
     }
 }

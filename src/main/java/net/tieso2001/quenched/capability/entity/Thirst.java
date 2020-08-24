@@ -1,4 +1,4 @@
-package net.tieso2001.quenched.capability;
+package net.tieso2001.quenched.capability.entity;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -54,8 +54,8 @@ public class Thirst implements IThirst {
     public static void tick(PlayerEntity player) {
         Difficulty difficulty = player.world.getDifficulty();
         IThirst cap = Thirst.getFromPlayer(player);
-        if (cap.getDecay() >= 24.0F) {
-            cap.setDecay(cap.getDecay() - 24.0F);
+        if (cap.getDecay() >= 32.0F) {
+            cap.setDecay(cap.getDecay() - 32.0F);
             if (difficulty != Difficulty.PEACEFUL) {
                 cap.setThirst(cap.getThirst() - 1);
             }
