@@ -10,10 +10,10 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.tieso2001.quenched.capability.entity.IThirst;
-import net.tieso2001.quenched.capability.entity.Thirst;
-import net.tieso2001.quenched.capability.item.IItemThirst;
-import net.tieso2001.quenched.capability.item.ItemThirst;
+import net.tieso2001.quenched.capability.entity.Hydration;
+import net.tieso2001.quenched.capability.entity.IHydration;
+import net.tieso2001.quenched.capability.item.IItemHydration;
+import net.tieso2001.quenched.capability.item.ItemHydration;
 
 @Mod.EventBusSubscriber
 public class PlayerEventHandler {
@@ -24,15 +24,15 @@ public class PlayerEventHandler {
         if (!world.isRemote) {
             PlayerEntity player = event.player;
             if (!player.isCreative() && !player.isSpectator()) {
-                IThirst cap = Thirst.getFromPlayer(player);
+                IHydration cap = Hydration.getFromPlayer(player);
                 if (player.isSprinting()) {
                     cap.setDecay(cap.getDecay() + 0.05F);
                 }
                 if (player.isSwimming()) {
                     cap.setDecay(cap.getDecay() + 0.005F);
                 }
-                Thirst.tick(player);
-                Thirst.updateClient((ServerPlayerEntity) event.player, Thirst.getFromPlayer(event.player));
+                Hydration.tick(player);
+                Hydration.updateClient((ServerPlayerEntity) event.player, Hydration.getFromPlayer(event.player));
             }
         }
     }
@@ -44,7 +44,7 @@ public class PlayerEventHandler {
             if (event.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) event.getEntity();
                 if (!player.isCreative() && !player.isSpectator()) {
-                    IThirst cap = Thirst.getFromPlayer(player);
+                    IHydration cap = Hydration.getFromPlayer(player);
                     if (player.isSprinting()) {
                         cap.setDecay(cap.getDecay() + 0.075F);
                     } else {
@@ -61,20 +61,20 @@ public class PlayerEventHandler {
         if (!world.isRemote) {
             if (event.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) event.getEntity();
-                IThirst playerCap = Thirst.getFromPlayer(player);
+                IHydration playerCap = Hydration.getFromPlayer(player);
                 ItemStack stack = event.getItem();
-                IItemThirst itemCap = ItemThirst.getFromItem(stack);
+                IItemHydration itemCap = ItemHydration.getFromItem(stack);
                 if (stack.getItem() == Items.APPLE) {
-                    itemCap.setThirst(1);
+                    itemCap.setHydration(1);
                 } else if (stack.getItem() == Items.POTION) {
                     if (stack.hasTag()) {
                         if (stack.getTag().getString("Potion").equals("minecraft:water")) {
-                            itemCap.setThirst(8);
+                            itemCap.setHydration(8);
                         }
                     }
                 }
-                playerCap.setThirst(playerCap.getThirst() + itemCap.getThirst());
-                Thirst.updateClient((ServerPlayerEntity) player, playerCap);
+                playerCap.setHydration(playerCap.getHydration() + itemCap.getHydration());
+                Hydration.updateClient((ServerPlayerEntity) player, playerCap);
             }
         }
     }

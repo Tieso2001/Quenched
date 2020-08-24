@@ -10,32 +10,32 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ItemThirstProvider implements ICapabilitySerializable<CompoundNBT> {
+public class ItemHydrationProvider implements ICapabilitySerializable<CompoundNBT> {
 
-    @CapabilityInject(IItemThirst.class)
-    public static Capability<IItemThirst> THIRST = null;
+    @CapabilityInject(IItemHydration.class)
+    public static Capability<IItemHydration> ITEM_HYDRATION = null;
 
-    private final LazyOptional<IItemThirst> instance;
+    private final LazyOptional<IItemHydration> instance;
 
-    public ItemThirstProvider() {
-        instance = LazyOptional.of(ItemThirst::new);
+    public ItemHydrationProvider() {
+        instance = LazyOptional.of(ItemHydration::new);
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == THIRST ? instance.cast() : LazyOptional.empty();
+        return cap == ITEM_HYDRATION ? instance.cast() : LazyOptional.empty();
     }
 
     @Override
     public CompoundNBT serializeNBT() {
-        return (CompoundNBT) THIRST.getStorage().writeNBT(THIRST, this.instance.orElseThrow(
+        return (CompoundNBT) ITEM_HYDRATION.getStorage().writeNBT(ITEM_HYDRATION, this.instance.orElseThrow(
                 () -> new IllegalArgumentException("LazyOptional must not be empty!")), null);
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        THIRST.getStorage().readNBT(THIRST, this.instance.orElseThrow(
+        ITEM_HYDRATION.getStorage().readNBT(ITEM_HYDRATION, this.instance.orElseThrow(
                 () -> new IllegalArgumentException("LazyOptional must not be empty!")), null, nbt);
     }
 }

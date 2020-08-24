@@ -11,8 +11,8 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.tieso2001.quenched.Quenched;
-import net.tieso2001.quenched.capability.entity.IThirst;
-import net.tieso2001.quenched.capability.entity.Thirst;
+import net.tieso2001.quenched.capability.entity.Hydration;
+import net.tieso2001.quenched.capability.entity.IHydration;
 
 import java.awt.*;
 
@@ -22,10 +22,10 @@ public class ClientEventHandler {
 
     private static final ResourceLocation MINECRAFT_ICONS = new ResourceLocation("minecraft", "textures/gui/icons.png");
 
-    private static final ResourceLocation THIRST_GUI_ELEMENTS = new ResourceLocation(Quenched.MOD_ID, "textures/gui/thirst.png");
-    private static final Rectangle THIRST_EMPTY = new Rectangle(0, 9, 9, 9);
-    private static final Rectangle THIRST_FULL = new Rectangle(9, 9, 9, 9);
-    private static final Rectangle THIRST_HALF = new Rectangle(18, 9, 9, 9);
+    private static final ResourceLocation HYDRATION_ICONS = new ResourceLocation(Quenched.MOD_ID, "textures/gui/hydration.png");
+    private static final Rectangle DROPLET_EMPTY = new Rectangle(0, 9, 9, 9);
+    private static final Rectangle DROPLET_FULL = new Rectangle(9, 9, 9, 9);
+    private static final Rectangle DROPLET_HALF = new Rectangle(18, 9, 9, 9);
 
     @SubscribeEvent
     public static void onRenderPre(RenderGameOverlayEvent.Pre event) {
@@ -40,7 +40,7 @@ public class ClientEventHandler {
             Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = (PlayerEntity) mc.getRenderViewEntity();
 
-            // render the air bubbles above thirst bar
+            // render the air bubbles above hydration bar
             if (player.isAlive()) {
 
                 mc.getTextureManager().bindTexture(MINECRAFT_ICONS);
@@ -70,44 +70,44 @@ public class ClientEventHandler {
 
             if (player.isAlive()){
 
-                mc.getTextureManager().bindTexture(THIRST_GUI_ELEMENTS);
+                mc.getTextureManager().bindTexture(HYDRATION_ICONS);
 
-                IThirst thirstCap = Thirst.getFromPlayer(player);
-                int thirst = thirstCap.getThirst();
+                IHydration cap = Hydration.getFromPlayer(player);
+                int hydration = cap.getHydration();
 
-                // thirst bar position
-                int thirstPosX = mc.getMainWindow().getScaledWidth() / 2 + 10;
-                int thirstPosY = mc.getMainWindow().getScaledHeight() - 49;
+                // hydration bar position
+                int hydrationPosX = mc.getMainWindow().getScaledWidth() / 2 + 10;
+                int hydrationPosY = mc.getMainWindow().getScaledHeight() - 49;
 
                 // render empty droplets
                 for (int i = 0; i < 10; i++) {
-                    mc.ingameGUI.blit(thirstPosX, thirstPosY, THIRST_EMPTY.x, THIRST_EMPTY.y, THIRST_EMPTY.width, THIRST_EMPTY.height);
-                    thirstPosX += (THIRST_EMPTY.width - 1);
+                    mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height);
+                    hydrationPosX += (DROPLET_EMPTY.width - 1);
                 }
 
                 /* render filled droplets */
 
                 // x position of last droplet
-                thirstPosX = mc.getMainWindow().getScaledWidth() / 2 + 10;
-                thirstPosX += 9 * (THIRST_EMPTY.width - 1);
+                hydrationPosX = mc.getMainWindow().getScaledWidth() / 2 + 10;
+                hydrationPosX += 9 * (DROPLET_EMPTY.width - 1);
 
                 int droplets;
                 boolean half = false;
 
-                if (thirst % 2 == 1) {
-                    droplets = (thirst - 1) / 2;
+                if (hydration % 2 == 1) {
+                    droplets = (hydration - 1) / 2;
                     half = true;
                 } else {
-                    droplets = thirst / 2;
+                    droplets = hydration / 2;
                 }
 
                 for (int i = 0; i < droplets; i++) {
-                    mc.ingameGUI.blit(thirstPosX, thirstPosY, THIRST_FULL.x, THIRST_FULL.y, THIRST_FULL.width, THIRST_FULL.height);
-                    thirstPosX -= (THIRST_FULL.width - 1);
+                    mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height);
+                    hydrationPosX -= (DROPLET_FULL.width - 1);
                 }
 
                 if (half) {
-                    mc.ingameGUI.blit(thirstPosX, thirstPosY, THIRST_HALF.x, THIRST_HALF.y, THIRST_HALF.width, THIRST_HALF.height);
+                    mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height);
                 }
             }
         }

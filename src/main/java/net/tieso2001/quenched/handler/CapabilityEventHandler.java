@@ -11,8 +11,8 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.tieso2001.quenched.Quenched;
-import net.tieso2001.quenched.capability.entity.ThirstProvider;
-import net.tieso2001.quenched.capability.item.ItemThirstProvider;
+import net.tieso2001.quenched.capability.entity.HydrationProvider;
+import net.tieso2001.quenched.capability.item.ItemHydrationProvider;
 
 @Mod.EventBusSubscriber
 public class CapabilityEventHandler {
@@ -20,7 +20,7 @@ public class CapabilityEventHandler {
     @SubscribeEvent
     public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> event){
         if (event.getObject() instanceof PlayerEntity) {
-            event.addCapability(new ResourceLocation(Quenched.MOD_ID, "thirst"), new ThirstProvider());
+            event.addCapability(new ResourceLocation(Quenched.MOD_ID, "player_hydration"), new HydrationProvider());
         }
     }
 
@@ -28,7 +28,7 @@ public class CapabilityEventHandler {
     public static void attachItemCapability(AttachCapabilitiesEvent<ItemStack> event){
         Item item = event.getObject().getItem();
         if (item.isFood() || item instanceof PotionItem || item == Items.MILK_BUCKET || item == Items.WATER_BUCKET) {
-            event.addCapability(new ResourceLocation(Quenched.MOD_ID, "item_thirst"), new ItemThirstProvider());
+            event.addCapability(new ResourceLocation(Quenched.MOD_ID, "item_thirst"), new ItemHydrationProvider());
         }
     }
 }

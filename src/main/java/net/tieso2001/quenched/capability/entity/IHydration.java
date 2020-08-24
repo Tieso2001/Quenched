@@ -1,9 +1,9 @@
 package net.tieso2001.quenched.capability.entity;
 
-public interface IThirst {
+public interface IHydration {
 
-    void setThirst(int value);
-    int getThirst();
+    void setHydration(int value);
+    int getHydration();
     void setDecay(float value);
     float getDecay();
 }

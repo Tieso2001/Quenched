@@ -5,12 +5,12 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.tieso2001.quenched.capability.entity.IThirst;
-import net.tieso2001.quenched.capability.entity.Thirst;
-import net.tieso2001.quenched.capability.entity.ThirstStorage;
-import net.tieso2001.quenched.capability.item.IItemThirst;
-import net.tieso2001.quenched.capability.item.ItemThirst;
-import net.tieso2001.quenched.capability.item.ItemThirstStorage;
+import net.tieso2001.quenched.capability.entity.Hydration;
+import net.tieso2001.quenched.capability.entity.HydrationStorage;
+import net.tieso2001.quenched.capability.entity.IHydration;
+import net.tieso2001.quenched.capability.item.IItemHydration;
+import net.tieso2001.quenched.capability.item.ItemHydration;
+import net.tieso2001.quenched.capability.item.ItemHydrationStorage;
 import net.tieso2001.quenched.network.PacketHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +28,8 @@ public final class Quenched {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        CapabilityManager.INSTANCE.register(IThirst.class, new ThirstStorage(), Thirst::new);
-        CapabilityManager.INSTANCE.register(IItemThirst.class, new ItemThirstStorage(), ItemThirst::new);
+        CapabilityManager.INSTANCE.register(IHydration.class, new HydrationStorage(), Hydration::new);
+        CapabilityManager.INSTANCE.register(IItemHydration.class, new ItemHydrationStorage(), ItemHydration::new);
         PacketHandler.register();
     }
 }
