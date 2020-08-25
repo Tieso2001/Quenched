@@ -4,6 +4,13 @@ public interface IHydration {
 
     void setHydration(int value);
     int getHydration();
-    void setDecay(float value);
-    float getDecay();
+
+    void setHydrationSaturation(float value);
+    float getHydrationSaturation();
+
+    void setHydrationExhaustion(float value);
+    float getHydrationExhaustion();
+
+    void setHydrationTimer(int value);
+    int getHydrationTimer();
 }

@@ -23,13 +23,12 @@ public class PlayerEventHandler {
         World world = event.player.world;
         if (!world.isRemote) {
             PlayerEntity player = event.player;
-            if (!player.isCreative() && !player.isSpectator()) {
+            if (!player.abilities.disableDamage && event.phase == TickEvent.Phase.START) {
                 IHydration cap = Hydration.getFromPlayer(player);
-                if (player.isSprinting()) {
-                    cap.setDecay(cap.getDecay() + 0.05F);
-                }
                 if (player.isSwimming()) {
-                    cap.setDecay(cap.getDecay() + 0.005F);
+                    cap.setHydrationExhaustion(cap.getHydrationExhaustion() + 0.0011F); // about 0.01F/m
+                } else if (player.isSprinting()) {
+                    cap.setHydrationExhaustion(cap.getHydrationExhaustion() + 0.02806F); // about 0.1F/m
                 }
                 Hydration.tick(player);
                 Hydration.updateClient((ServerPlayerEntity) event.player, Hydration.getFromPlayer(event.player));
@@ -43,12 +42,12 @@ public class PlayerEventHandler {
         if (!world.isRemote) {
             if (event.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) event.getEntity();
-                if (!player.isCreative() && !player.isSpectator()) {
+                if (!player.abilities.disableDamage) {
                     IHydration cap = Hydration.getFromPlayer(player);
                     if (player.isSprinting()) {
-                        cap.setDecay(cap.getDecay() + 0.075F);
+                        cap.setHydrationExhaustion(cap.getHydrationExhaustion() - 0.085F);
                     } else {
-                        cap.setDecay(cap.getDecay() + 0.05F);
+                        cap.setHydrationExhaustion(cap.getHydrationExhaustion() + 0.05F);
                     }
                 }
             }
@@ -66,14 +65,17 @@ public class PlayerEventHandler {
                 IItemHydration itemCap = ItemHydration.getFromItem(stack);
                 if (stack.getItem() == Items.APPLE) {
                     itemCap.setHydration(1);
+                    itemCap.setHydrationSaturation(0);
                 } else if (stack.getItem() == Items.POTION) {
                     if (stack.hasTag()) {
                         if (stack.getTag().getString("Potion").equals("minecraft:water")) {
-                            itemCap.setHydration(8);
+                            itemCap.setHydration(-8);
+                            itemCap.setHydrationSaturation(0);
                         }
                     }
                 }
                 playerCap.setHydration(playerCap.getHydration() + itemCap.getHydration());
+                playerCap.setHydrationSaturation(playerCap.getHydrationSaturation() + itemCap.getHydrationSaturation());
                 Hydration.updateClient((ServerPlayerEntity) player, playerCap);
             }
         }

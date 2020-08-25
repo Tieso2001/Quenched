@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 public class ItemHydration implements IItemHydration {
 
     private int hydration;
+    private float hydrationSaturation;
 
     @Override
     public void setHydration(int value) {
@@ -14,6 +15,16 @@ public class ItemHydration implements IItemHydration {
     @Override
     public int getHydration() {
         return this.hydration;
+    }
+
+    @Override
+    public void setHydrationSaturation(float value) {
+        this.hydrationSaturation = value;
+    }
+
+    @Override
+    public float getHydrationSaturation() {
+        return hydrationSaturation;
     }
 
     public static IItemHydration getFromItem(ItemStack itemStack){

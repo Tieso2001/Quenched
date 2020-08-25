@@ -20,6 +20,8 @@ import java.awt.*;
 @Mod.EventBusSubscriber
 public class ClientEventHandler {
 
+    private static int ticks = 0;
+
     private static final ResourceLocation MINECRAFT_ICONS = new ResourceLocation("minecraft", "textures/gui/icons.png");
 
     private static final ResourceLocation HYDRATION_ICONS = new ResourceLocation(Quenched.MOD_ID, "textures/gui/hydration.png");
@@ -63,7 +65,6 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onRenderPost(RenderGameOverlayEvent.Post event) {
-
         if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD && !event.isCanceled()) {
             Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = (PlayerEntity) mc.getRenderViewEntity();
@@ -79,18 +80,7 @@ public class ClientEventHandler {
                 int hydrationPosX = mc.getMainWindow().getScaledWidth() / 2 + 10;
                 int hydrationPosY = mc.getMainWindow().getScaledHeight() - 49;
 
-                // render empty droplets
-                for (int i = 0; i < 10; i++) {
-                    mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height);
-                    hydrationPosX += (DROPLET_EMPTY.width - 1);
-                }
-
-                /* render filled droplets */
-
-                // x position of last droplet
-                hydrationPosX = mc.getMainWindow().getScaledWidth() / 2 + 10;
-                hydrationPosX += 9 * (DROPLET_EMPTY.width - 1);
-
+                // filled droplets
                 int droplets;
                 boolean half = false;
 
@@ -101,14 +91,28 @@ public class ClientEventHandler {
                     droplets = hydration / 2;
                 }
 
-                for (int i = 0; i < droplets; i++) {
-                    mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height);
-                    hydrationPosX -= (DROPLET_FULL.width - 1);
-                }
+                // render droplets
+                for (int i = 0; i < 10; i++) {
 
-                if (half) {
-                    mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height);
+                    // hydration bar shaking when saturation is gone
+                    if (cap.getHydrationSaturation() <= 0.0F && (ticks % (cap.getHydration() * 3 + 1) == 0) && (ticks % 2 == 0)) {
+                        hydrationPosY = (mc.getMainWindow().getScaledHeight() - 49) + (player.world.rand.nextInt(3) - 1);
+                    }
+
+                    // render empty droplet
+                    mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height);
+
+                    // render filled droplets
+                    if (half && droplets == (9 - i)) {
+                        // render half droplet
+                        mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height);
+                    } else if (droplets >= (10 - i)) {
+                        // render full droplet
+                        mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height);
+                    }
+                    hydrationPosX += (DROPLET_EMPTY.width - 1);
                 }
+                ticks++;
             }
         }
     }
