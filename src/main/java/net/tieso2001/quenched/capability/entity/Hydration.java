@@ -3,9 +3,10 @@ package net.tieso2001.quenched.capability.entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameRules;
 import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.HydrationPacket;
 
@@ -21,8 +22,8 @@ public class Hydration implements IHydration {
     private int hydrationTimer;
 
     public Hydration() {
-        this.hydration = MAX_HYDRATION;
-        this.hydrationSaturation = 5.0F;
+        this.setHydration(MAX_HYDRATION);
+        this.setHydrationSaturation(5.0F);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class Hydration implements IHydration {
 
     @Override
     public void setHydrationSaturation(float value) {
-        this.hydrationSaturation = value;
+        this.hydrationSaturation = Math.max(Math.min(value, (float) this.hydration), 0.0F);
     }
 
     @Override
@@ -79,36 +80,24 @@ public class Hydration implements IHydration {
         if (cap.getHydrationExhaustion() > 4.0F) {
             cap.setHydrationExhaustion(cap.getHydrationExhaustion() - 4.0F);
             if (cap.getHydrationSaturation() > 0.0F) {
-                cap.setHydrationSaturation(Math.max(cap.getHydrationSaturation() - 1.0F, 0.0F));
+                cap.setHydrationSaturation(cap.getHydrationSaturation() - 1.0F);
             } else if (difficulty != Difficulty.PEACEFUL) {
                 cap.setHydration(cap.getHydration() - 1);
             }
         }
 
-        boolean flag = player.world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
-        if (flag && cap.getHydrationSaturation() > 0.0F && player.shouldHeal() && cap.getHydration() >= MAX_HYDRATION) {
-            cap.setHydrationTimer(cap.getHydrationTimer() + 1);
-            if (cap.getHydrationTimer() >= 10) {
-                float f = Math.min(cap.getHydrationSaturation(), 6.0F);
-                player.heal(f / 6.0F);
-                cap.setHydrationExhaustion(cap.getHydrationExhaustion() + f);
-                cap.setHydrationTimer(0);
-            }
-        } else if (flag && cap.getHydration() >= 18 && player.shouldHeal()) {
-            cap.setHydrationTimer(cap.getHydrationTimer() + 1);
-            if (cap.getHydrationTimer() >= 80) {
-                player.heal(1.0F);
-                cap.setHydrationExhaustion(cap.getHydrationExhaustion() + 6.0F);
-                cap.setHydrationTimer(0);
-            }
-        } else if (cap.getHydration() <= 0) {
-            cap.setHydrationTimer(cap.getHydrationTimer() + 1);
-            if (cap.getHydrationTimer() >= 80) {
-                if (player.getHealth() > 10.0F || difficulty == Difficulty.HARD || player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL) {
-                    player.attackEntityFrom(DEHYDRATION, 1.0F);
+        if (cap.getHydration() <= 6) {
+            player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 5, 0, false, false));
+            player.addPotionEffect(new EffectInstance(Effects.WEAKNESS, 5, 0, false, false));
+            player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 5, 0, false, false));
+            if (cap.getHydration() <= 0) {
+                cap.setHydrationTimer(cap.getHydrationTimer() + 1);
+                if (cap.getHydrationTimer() >= 80) {
+                    if (player.getHealth() > 10.0F || difficulty == Difficulty.HARD || player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL) {
+                        player.attackEntityFrom(DEHYDRATION, 1.0F);
+                    }
+                    cap.setHydrationTimer(0);
                 }
-
-                cap.setHydrationTimer(0);
             }
         } else {
             cap.setHydrationTimer(0);

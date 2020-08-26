@@ -64,13 +64,13 @@ public class PlayerEventHandler {
                 ItemStack stack = event.getItem();
                 IItemHydration itemCap = ItemHydration.getFromItem(stack);
                 if (stack.getItem() == Items.APPLE) {
-                    itemCap.setHydration(1);
-                    itemCap.setHydrationSaturation(0);
+                    itemCap.setHydration(8);
+                    itemCap.setHydrationSaturation(8);
                 } else if (stack.getItem() == Items.POTION) {
                     if (stack.hasTag()) {
                         if (stack.getTag().getString("Potion").equals("minecraft:water")) {
                             itemCap.setHydration(-8);
-                            itemCap.setHydrationSaturation(0);
+                            itemCap.setHydrationSaturation(-20);
                         }
                     }
                 }
