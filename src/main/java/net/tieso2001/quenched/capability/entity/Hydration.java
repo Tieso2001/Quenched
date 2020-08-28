@@ -27,6 +27,12 @@ public class Hydration implements IHydration {
     }
 
     @Override
+    public void addStats(int hydration, float saturation) {
+        this.setHydration(this.getHydration() + hydration);
+        this.setHydrationSaturation(this.getHydrationSaturation() + saturation);
+    }
+
+    @Override
     public void setHydration(int value) {
         this.hydration = Math.min(Math.max(value, 0), MAX_HYDRATION);
     }
@@ -54,6 +60,11 @@ public class Hydration implements IHydration {
     @Override
     public float getHydrationExhaustion() {
         return hydrationExhaustion;
+    }
+
+    @Override
+    public void addHydrationExhaustion(float value) {
+        this.setHydrationExhaustion(this.getHydrationExhaustion() + value);
     }
 
     @Override

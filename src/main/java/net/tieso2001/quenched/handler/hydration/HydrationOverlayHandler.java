@@ -1,13 +1,12 @@
-package net.tieso2001.quenched.handler;
+package net.tieso2001.quenched.handler.hydration;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.tieso2001.quenched.Quenched;
@@ -15,22 +14,31 @@ import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.IHydration;
 
 import java.awt.*;
+import java.util.Random;
 
-@OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber
-public class ClientEventHandler {
+public class HydrationOverlayHandler {
 
-    private static int ticks = 0;
-
+    private static final Minecraft mc = Minecraft.getInstance();
+    private static final Random rand = new Random();
     private static final ResourceLocation MINECRAFT_ICONS = new ResourceLocation("minecraft", "textures/gui/icons.png");
 
-    private static final ResourceLocation HYDRATION_ICONS = new ResourceLocation(Quenched.MOD_ID, "textures/gui/hydration.png");
+    private static final ResourceLocation HYDRATION_ICONS = new ResourceLocation(Quenched.MOD_ID, "textures/gui/hydration_icons.png");
     private static final Rectangle DROPLET_EMPTY = new Rectangle(0, 9, 9, 9);
     private static final Rectangle DROPLET_FULL = new Rectangle(9, 9, 9, 9);
     private static final Rectangle DROPLET_HALF = new Rectangle(18, 9, 9, 9);
 
+    private static int ticks = 0;
+
     @SubscribeEvent
-    public static void onRenderPre(RenderGameOverlayEvent.Pre event) {
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && !mc.isGamePaused()) {
+            ticks++;
+        }
+    }
+
+    @SubscribeEvent
+    public static void renderAirBubbles(RenderGameOverlayEvent.Pre event) {
 
         if (event.getType() == RenderGameOverlayEvent.ElementType.AIR) {
 
@@ -39,7 +47,6 @@ public class ClientEventHandler {
                 event.setCanceled(true);
             }
 
-            Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = (PlayerEntity) mc.getRenderViewEntity();
 
             // render the air bubbles above hydration bar
@@ -64,12 +71,12 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onRenderPost(RenderGameOverlayEvent.Post event) {
+    public static void renderHydrationBar(RenderGameOverlayEvent.Post event) {
         if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD && !event.isCanceled()) {
             Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = (PlayerEntity) mc.getRenderViewEntity();
 
-            if (player.isAlive()){
+            if (player.isAlive()) {
 
                 mc.getTextureManager().bindTexture(HYDRATION_ICONS);
 
@@ -91,12 +98,14 @@ public class ClientEventHandler {
                     droplets = hydration / 2;
                 }
 
+                rand.setSeed(ticks * 312871);
+
                 // render droplets
                 for (int i = 0; i < 10; i++) {
 
                     // hydration bar shaking when saturation is gone
-                    if (cap.getHydrationSaturation() <= 0.0F && (ticks % (cap.getHydration() * 3 + 1) == 0) && (ticks % 2 == 0)) {
-                        hydrationPosY = (mc.getMainWindow().getScaledHeight() - 49) + (player.world.rand.nextInt(3) - 1);
+                    if (cap.getHydrationSaturation() <= 0.0F && ticks % (cap.getHydration() * 3 + 1) == 0) {
+                        hydrationPosY = (mc.getMainWindow().getScaledHeight() - 49) + (rand.nextInt(3) - 1);
                     }
 
                     // render empty droplet
@@ -112,7 +121,6 @@ public class ClientEventHandler {
                     }
                     hydrationPosX += (DROPLET_EMPTY.width - 1);
                 }
-                ticks++;
             }
         }
     }

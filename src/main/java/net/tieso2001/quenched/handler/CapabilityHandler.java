@@ -15,7 +15,7 @@ import net.tieso2001.quenched.capability.entity.HydrationProvider;
 import net.tieso2001.quenched.capability.item.ItemHydrationProvider;
 
 @Mod.EventBusSubscriber
-public class CapabilityEventHandler {
+public class CapabilityHandler {
 
     @SubscribeEvent
     public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> event){
