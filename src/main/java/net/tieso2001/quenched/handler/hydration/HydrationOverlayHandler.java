@@ -24,9 +24,9 @@ public class HydrationOverlayHandler {
     private static final ResourceLocation MINECRAFT_ICONS = new ResourceLocation("minecraft", "textures/gui/icons.png");
 
     private static final ResourceLocation HYDRATION_ICONS = new ResourceLocation(Quenched.MOD_ID, "textures/gui/hydration_icons.png");
-    private static final Rectangle DROPLET_EMPTY = new Rectangle(0, 9, 9, 9);
-    private static final Rectangle DROPLET_FULL = new Rectangle(9, 9, 9, 9);
-    private static final Rectangle DROPLET_HALF = new Rectangle(18, 9, 9, 9);
+    private static final Rectangle DROPLET_EMPTY = new Rectangle(0, 0, 9, 9);
+    private static final Rectangle DROPLET_FULL = new Rectangle(9, 0, 9, 9);
+    private static final Rectangle DROPLET_HALF = new Rectangle(18, 0, 9, 9);
 
     private static int ticks = 0;
 
