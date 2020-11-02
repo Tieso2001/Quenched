@@ -7,6 +7,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.Difficulty;
+import net.tieso2001.quenched.entity.player.CustomFoodStats;
 import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.HydrationPacket;
 
@@ -98,6 +99,10 @@ public class Hydration implements IHydration {
         }
 
         if (cap.getHydration() <= 6) {
+            if (player.getFoodStats() instanceof CustomFoodStats) {
+                CustomFoodStats foodStats = (CustomFoodStats) player.getFoodStats();
+                foodStats.setFoodHealthRegen(false);
+            }
             player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 5, 0, false, false));
             player.addPotionEffect(new EffectInstance(Effects.WEAKNESS, 5, 0, false, false));
             player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 5, 0, false, false));
@@ -111,6 +116,10 @@ public class Hydration implements IHydration {
                 }
             }
         } else {
+            if (player.getFoodStats() instanceof CustomFoodStats) {
+                CustomFoodStats foodStats = (CustomFoodStats) player.getFoodStats();
+                foodStats.setFoodHealthRegen(true);
+            }
             cap.setHydrationTimer(0);
         }
     }
