@@ -9,12 +9,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.tieso2001.quenched.Quenched;
 import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.IHydration;
 import net.tieso2001.quenched.capability.item.IItemHydration;
 import net.tieso2001.quenched.capability.item.ItemHydration;
 import net.tieso2001.quenched.hydration.HydrationItem;
-import net.tieso2001.quenched.hydration.HydrationManager;
 
 import java.util.Objects;
 
@@ -33,10 +33,11 @@ public class HydrationHandler {
                 ItemStack stack = event.getItem();
                 IItemHydration itemCap = ItemHydration.getFromItem(stack);
 
-                for (HydrationItem hydrationItem : HydrationManager.hydrationItems) {
-                    if (Objects.equals(stack.getItem().getRegistryName(), new ResourceLocation(hydrationItem.getItem()))) {
-                        itemCap.setHydration(hydrationItem.getHydration());
-                        itemCap.setHydrationSaturation(hydrationItem.getHydrationSaturation());
+                for (HydrationItem item : Quenched.getHydrationStatsManager().getAllHydrationStats().values()) {
+                    if (Objects.equals(stack.getItem().getRegistryName(), new ResourceLocation(item.getItem()))) {
+                        itemCap.setHydration(item.getHydration());
+                        itemCap.setHydrationSaturation(item.getHydrationSaturation());
+                        break;
                     }
                 }
 
