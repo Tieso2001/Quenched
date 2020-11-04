@@ -1,5 +1,6 @@
 package net.tieso2001.quenched.handler.hydration;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
@@ -27,6 +28,8 @@ public class HydrationOverlayHandler {
     private static final Rectangle DROPLET_EMPTY = new Rectangle(0, 0, 9, 9);
     private static final Rectangle DROPLET_FULL = new Rectangle(9, 0, 9, 9);
     private static final Rectangle DROPLET_HALF = new Rectangle(18, 0, 9, 9);
+
+    private static final MatrixStack matrixStack = new MatrixStack();
 
     private static int ticks = 0;
 
@@ -63,7 +66,7 @@ public class HydrationOverlayHandler {
                     int partial = MathHelper.ceil((double)player.getAir() * 10.0D / 300.0D) - full;
 
                     for (int i = 0; i < full + partial; ++i) {
-                        //mc.ingameGUI.blit(left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9); TODO
+                        mc.ingameGUI.blit(matrixStack, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
                     }
                 }
             }
@@ -109,15 +112,15 @@ public class HydrationOverlayHandler {
                     }
 
                     // render empty droplet
-                    // mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height); TODO
+                    mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height);
 
                     // render filled droplets
                     if (half && droplets == (9 - i)) {
                         // render half droplet
-                        // mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height); TODO
+                        mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height);
                     } else if (droplets >= (10 - i)) {
                         // render full droplet
-                        // mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height); TODO
+                        mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height);
                     }
                     hydrationPosX += (DROPLET_EMPTY.width - 1);
                 }
