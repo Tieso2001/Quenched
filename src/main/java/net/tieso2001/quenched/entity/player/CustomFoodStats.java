@@ -10,8 +10,13 @@ public class CustomFoodStats extends FoodStats {
 
     private boolean foodHealthRegen = true;
 
-    public CustomFoodStats() {
+    public CustomFoodStats(int foodLevel, float foodSaturationLevel, float foodExhaustionLevel, int foodTimer, int prevFoodLevel) {
         super();
+        this.foodLevel = foodLevel;
+        this.foodSaturationLevel = foodSaturationLevel;
+        this.foodExhaustionLevel = foodExhaustionLevel;
+        this.foodTimer = foodTimer;
+        this.prevFoodLevel = prevFoodLevel;
     }
 
     @Override

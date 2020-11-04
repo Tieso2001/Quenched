@@ -47,7 +47,12 @@ public class CapabilityHandler {
                     if (!foodStats.isAccessible()) {
                         foodStats.setAccessible(true);
                     }
-                    foodStats.set(player, new CustomFoodStats());
+                    int foodLevel = player.getFoodStats().foodLevel;
+                    float foodSaturationLevel = player.getFoodStats().foodSaturationLevel;
+                    float foodExhaustionLevel = player.getFoodStats().foodExhaustionLevel;
+                    int foodTimer = player.getFoodStats().foodTimer;
+                    int prevFoodLevel = player.getFoodStats().prevFoodLevel;
+                    foodStats.set(player, new CustomFoodStats(foodLevel, foodSaturationLevel, foodExhaustionLevel, foodTimer, prevFoodLevel));
                 } catch (NoSuchFieldException | IllegalAccessException x) {
                     x.printStackTrace();
                 }
