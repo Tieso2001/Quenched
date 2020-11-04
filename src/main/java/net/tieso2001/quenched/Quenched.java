@@ -11,6 +11,7 @@ import net.tieso2001.quenched.capability.entity.IHydration;
 import net.tieso2001.quenched.capability.item.IItemHydration;
 import net.tieso2001.quenched.capability.item.ItemHydration;
 import net.tieso2001.quenched.capability.item.ItemHydrationStorage;
+import net.tieso2001.quenched.hydration.HydrationStatsManager;
 import net.tieso2001.quenched.network.PacketHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +22,7 @@ public final class Quenched {
     public static final String MOD_ID = "quenched";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    //private static final HydrationStatsManager hydrationStatsManager = new HydrationStatsManager(); TODO
+    private static final HydrationStatsManager hydrationStatsManager = new HydrationStatsManager();
 
     public Quenched() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -34,8 +35,7 @@ public final class Quenched {
         PacketHandler.register();
     }
 
-    /*
     public static HydrationStatsManager getHydrationStatsManager() {
         return hydrationStatsManager;
-    }*/
+    }
 }
