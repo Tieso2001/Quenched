@@ -1,16 +1,13 @@
 package net.tieso2001.quenched.handler.hydration;
 
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -39,11 +36,11 @@ public class HydrationExhaustionHandler {
                 prevPosY = player.getPosY();
                 prevPosZ = player.getPosZ();
 
-                if ((player.isSwimming() || player.areEyesInFluid(FluidTags.WATER, true)) && distance > 0) {
+                if ((player.isSwimming() || player.areEyesInFluid(FluidTags.WATER)) && distance > 0) {
                     cap.addHydrationExhaustion((float) (0.01F * distance));
                 } else if (player.isInWater() && horizontalDistance > 0) {
                     cap.addHydrationExhaustion((float) (0.01F * horizontalDistance));
-                } else if (player.onGround && player.isSprinting() && horizontalDistance > 0) {
+                } else if (player.isOnGround() && player.isSprinting() && horizontalDistance > 0) {
                     cap.addHydrationExhaustion((float) (0.1F * horizontalDistance));
                 }
 
@@ -83,13 +80,14 @@ public class HydrationExhaustionHandler {
         }
     }
 
+    /*
     @SubscribeEvent
     public static void onPlayerAttackTarget(AttackEntityEvent event) {
         World world = event.getEntity().world;
         if (!world.isRemote) {
             if (event.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) event.getEntity();
-                float damageAmount = (float) player.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue();
+                float damageAmount = (float) player.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue(); //TODO
                 if (!player.abilities.disableDamage && event.getTarget().attackEntityFrom(DamageSource.causePlayerDamage(player), damageAmount)) {
                     IHydration cap = Hydration.getFromPlayer(player);
                     cap.addHydrationExhaustion(0.1F);
@@ -97,6 +95,7 @@ public class HydrationExhaustionHandler {
             }
         }
     }
+     */
 
     @SubscribeEvent
     public static void onPlayerDamage(LivingDamageEvent event) {

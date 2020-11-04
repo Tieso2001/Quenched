@@ -4,19 +4,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.tieso2001.quenched.Quenched;
 import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.IHydration;
 import net.tieso2001.quenched.capability.item.IItemHydration;
 import net.tieso2001.quenched.capability.item.ItemHydration;
-import net.tieso2001.quenched.hydration.HydrationItem;
-
-import java.util.Objects;
 
 @Mod.EventBusSubscriber
 public class HydrationHandler {
@@ -33,6 +28,7 @@ public class HydrationHandler {
                 ItemStack stack = event.getItem();
                 IItemHydration itemCap = ItemHydration.getFromItem(stack);
 
+                /*
                 for (HydrationItem item : Quenched.getHydrationStatsManager().getAllHydrationStats().values()) {
                     if (Objects.equals(stack.getItem().getRegistryName(), new ResourceLocation(item.getItem()))) {
                         itemCap.setHydration(item.getHydration());
@@ -40,6 +36,7 @@ public class HydrationHandler {
                         break;
                     }
                 }
+                 */
 
                 if (stack.getItem() == Items.POTION) {
                     if (stack.hasTag()) {

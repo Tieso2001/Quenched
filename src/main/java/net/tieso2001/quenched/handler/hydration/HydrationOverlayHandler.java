@@ -63,7 +63,7 @@ public class HydrationOverlayHandler {
                     int partial = MathHelper.ceil((double)player.getAir() * 10.0D / 300.0D) - full;
 
                     for (int i = 0; i < full + partial; ++i) {
-                        mc.ingameGUI.blit(left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
+                        //mc.ingameGUI.blit(left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9); TODO
                     }
                 }
             }
@@ -109,15 +109,15 @@ public class HydrationOverlayHandler {
                     }
 
                     // render empty droplet
-                    mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height);
+                    // mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height); TODO
 
                     // render filled droplets
                     if (half && droplets == (9 - i)) {
                         // render half droplet
-                        mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height);
+                        // mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height); TODO
                     } else if (droplets >= (10 - i)) {
                         // render full droplet
-                        mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height);
+                        // mc.ingameGUI.blit(hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height); TODO
                     }
                     hydrationPosX += (DROPLET_EMPTY.width - 1);
                 }

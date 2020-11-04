@@ -1,6 +1,7 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[34,)"
 authors="Tieso2001"
+license="MIT License"
 
 [[mods]]
 modId="quenched"
@@ -12,13 +13,13 @@ description='''
 [[dependencies.quenched]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.15.2]"
+versionRange="[1.16.3]"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.quenched]]
 modId="forge"
 mandatory=true
-versionRange="[31,)"
+versionRange="[34,)"
 ordering="NONE"
 side="BOTH"

@@ -9,6 +9,6 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public static void onServerAboutToStart(FMLServerAboutToStartEvent event) {
-        event.getServer().getResourceManager().addReloadListener(Quenched.getHydrationStatsManager());
+        //event.getServer().get().addReloadListener(Quenched.getHydrationStatsManager()); TODO
     }
 }
