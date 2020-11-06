@@ -3,8 +3,6 @@ package net.tieso2001.quenched.handler.hydration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -12,11 +10,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.tieso2001.quenched.Quenched;
 import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.IHydration;
-import net.tieso2001.quenched.capability.item.IItemHydration;
-import net.tieso2001.quenched.capability.item.ItemHydration;
-import net.tieso2001.quenched.hydration.HydrationItem;
-
-import java.util.Objects;
+import net.tieso2001.quenched.hydration.ItemHydrationStat;
 
 @Mod.EventBusSubscriber
 public class HydrationHandler {
@@ -31,26 +25,17 @@ public class HydrationHandler {
                 IHydration playerCap = Hydration.getFromPlayer(player);
 
                 ItemStack stack = event.getItem();
-                IItemHydration itemCap = ItemHydration.getFromItem(stack);
 
-                for (HydrationItem item : Quenched.getHydrationStatsManager().getAllHydrationStats().values()) {
-                    if (Objects.equals(stack.getItem().getRegistryName(), new ResourceLocation(item.getItem()))) {
-                        itemCap.setHydration(item.getHydration());
-                        itemCap.setHydrationSaturation(item.getHydrationSaturation());
-                        break;
-                    }
+                int hydration = 0;
+                float hydrationSaturation = 0.0F;
+
+                if (Quenched.getHydrationStatsManager().hasHydrationStat(stack)) {
+                    ItemHydrationStat stat = Quenched.getHydrationStatsManager().getItemHydrationStat(stack);
+                    hydration = stat.getHydration();
+                    hydrationSaturation = stat.getHydrationSaturation();
                 }
 
-                if (stack.getItem() == Items.POTION) {
-                    if (stack.hasTag()) {
-                        if (stack.getTag().getString("Potion").equals("minecraft:water")) {
-                            itemCap.setHydration(-8);
-                            itemCap.setHydrationSaturation(-20);
-                        }
-                    }
-                }
-
-                playerCap.addStats(itemCap.getHydration(), itemCap.getHydrationSaturation());
+                playerCap.addStats(hydration, hydrationSaturation);
                 Hydration.updateClient((ServerPlayerEntity) player, playerCap);
             }
         }

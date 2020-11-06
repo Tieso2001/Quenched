@@ -1,0 +1,9 @@
+{
+  "item": "minecraft:potion",
+  "tag": {
+    "tagname": "Potion",
+    "value": "minecraft:water"
+  },
+  "hydration": -4,
+  "hydrationSaturation": 8
+}

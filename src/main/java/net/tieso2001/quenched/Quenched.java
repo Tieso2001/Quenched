@@ -8,9 +8,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.HydrationStorage;
 import net.tieso2001.quenched.capability.entity.IHydration;
-import net.tieso2001.quenched.capability.item.IItemHydration;
-import net.tieso2001.quenched.capability.item.ItemHydration;
-import net.tieso2001.quenched.capability.item.ItemHydrationStorage;
 import net.tieso2001.quenched.hydration.HydrationStatsManager;
 import net.tieso2001.quenched.network.PacketHandler;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +28,6 @@ public final class Quenched {
 
     private void setup(final FMLCommonSetupEvent event) {
         CapabilityManager.INSTANCE.register(IHydration.class, new HydrationStorage(), Hydration::new);
-        CapabilityManager.INSTANCE.register(IItemHydration.class, new ItemHydrationStorage(), ItemHydration::new);
         PacketHandler.register();
     }
 

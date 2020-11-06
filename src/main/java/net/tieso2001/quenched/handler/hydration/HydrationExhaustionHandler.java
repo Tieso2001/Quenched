@@ -80,14 +80,14 @@ public class HydrationExhaustionHandler {
         }
     }
 
-    /*
+    /* TODO
     @SubscribeEvent
     public static void onPlayerAttackTarget(AttackEntityEvent event) {
         World world = event.getEntity().world;
         if (!world.isRemote) {
             if (event.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) event.getEntity();
-                float damageAmount = (float) player.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue(); //TODO
+                float damageAmount = (float) player.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue();
                 if (!player.abilities.disableDamage && event.getTarget().attackEntityFrom(DamageSource.causePlayerDamage(player), damageAmount)) {
                     IHydration cap = Hydration.getFromPlayer(player);
                     cap.addHydrationExhaustion(0.1F);
