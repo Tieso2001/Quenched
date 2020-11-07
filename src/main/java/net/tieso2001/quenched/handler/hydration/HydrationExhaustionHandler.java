@@ -1,13 +1,16 @@
 package net.tieso2001.quenched.handler.hydration;
 
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -80,14 +83,13 @@ public class HydrationExhaustionHandler {
         }
     }
 
-    /* TODO
     @SubscribeEvent
     public static void onPlayerAttackTarget(AttackEntityEvent event) {
         World world = event.getEntity().world;
         if (!world.isRemote) {
             if (event.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) event.getEntity();
-                float damageAmount = (float) player.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue();
+                float damageAmount = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
                 if (!player.abilities.disableDamage && event.getTarget().attackEntityFrom(DamageSource.causePlayerDamage(player), damageAmount)) {
                     IHydration cap = Hydration.getFromPlayer(player);
                     cap.addHydrationExhaustion(0.1F);
@@ -95,7 +97,6 @@ public class HydrationExhaustionHandler {
             }
         }
     }
-     */
 
     @SubscribeEvent
     public static void onPlayerDamage(LivingDamageEvent event) {
