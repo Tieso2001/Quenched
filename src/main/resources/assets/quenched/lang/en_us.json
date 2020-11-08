@@ -1,4 +1,5 @@
 {
   "death.attack.dehydration": "%1$s should have drunk more water",
-  "death.attack.dehydration.player": "%1$s should have drunk more water whilst fighting %2$s"
+  "death.attack.dehydration.player": "%1$s should have drunk more water whilst fighting %2$s",
+  "effect.quenched.dehydration": "Dehydration"
 }

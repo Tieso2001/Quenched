@@ -8,6 +8,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.Difficulty;
 import net.tieso2001.quenched.entity.player.CustomFoodStats;
+import net.tieso2001.quenched.init.ModEffects;
 import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.HydrationPacket;
 

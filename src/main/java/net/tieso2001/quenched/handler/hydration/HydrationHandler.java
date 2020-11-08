@@ -22,7 +22,7 @@ public class HydrationHandler {
             if (event.getEntity() instanceof PlayerEntity) {
 
                 PlayerEntity player = (PlayerEntity) event.getEntity();
-                IHydration playerCap = Hydration.getFromPlayer(player);
+                IHydration cap = Hydration.getFromPlayer(player);
 
                 ItemStack stack = event.getItem();
 
@@ -35,8 +35,8 @@ public class HydrationHandler {
                     hydrationSaturation = stat.getHydrationSaturation();
                 }
 
-                playerCap.addStats(hydration, hydrationSaturation);
-                Hydration.updateClient((ServerPlayerEntity) player, playerCap);
+                cap.addStats(hydration, hydrationSaturation);
+                Hydration.updateClient((ServerPlayerEntity) player, cap);
             }
         }
     }

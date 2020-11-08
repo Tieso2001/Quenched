@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.tieso2001.quenched.Quenched;
 import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.IHydration;
+import net.tieso2001.quenched.init.ModEffects;
 
 import java.awt.*;
 import java.util.Random;
@@ -53,20 +54,22 @@ public class HydrationOverlayHandler {
             PlayerEntity player = (PlayerEntity) mc.getRenderViewEntity();
 
             // render the air bubbles above hydration bar
-            if (player.isAlive()) {
+            if (player != null) {
+                if (player.isAlive()) {
 
-                mc.getTextureManager().bindTexture(MINECRAFT_ICONS);
+                    mc.getTextureManager().bindTexture(MINECRAFT_ICONS);
 
-                int left = mc.getMainWindow().getScaledWidth() / 2 + 91;
-                int top = mc.getMainWindow().getScaledHeight() - 59;
+                    int left = mc.getMainWindow().getScaledWidth() / 2 + 91;
+                    int top = mc.getMainWindow().getScaledHeight() - 59;
 
-                if (player.areEyesInFluid(FluidTags.WATER) || player.getAir() < 300){
+                    if (player.areEyesInFluid(FluidTags.WATER) || player.getAir() < 300){
 
-                    int full = MathHelper.ceil((double)(player.getAir() - 2) * 10.0D / 300.0D);
-                    int partial = MathHelper.ceil((double)player.getAir() * 10.0D / 300.0D) - full;
+                        int full = MathHelper.ceil((double)(player.getAir() - 2) * 10.0D / 300.0D);
+                        int partial = MathHelper.ceil((double)player.getAir() * 10.0D / 300.0D) - full;
 
-                    for (int i = 0; i < full + partial; ++i) {
-                        mc.ingameGUI.blit(matrixStack, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
+                        for (int i = 0; i < full + partial; ++i) {
+                            mc.ingameGUI.blit(matrixStack, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
+                        }
                     }
                 }
             }
@@ -79,50 +82,60 @@ public class HydrationOverlayHandler {
             Minecraft mc = Minecraft.getInstance();
             PlayerEntity player = (PlayerEntity) mc.getRenderViewEntity();
 
-            if (player.isAlive()) {
+            if (player != null) {
+                if (player.isAlive()) {
 
-                mc.getTextureManager().bindTexture(HYDRATION_ICONS);
-
-                IHydration cap = Hydration.getFromPlayer(player);
-                int hydration = cap.getHydration();
-
-                // hydration bar position
-                int hydrationPosX = mc.getMainWindow().getScaledWidth() / 2 + 10;
-                int hydrationPosY = mc.getMainWindow().getScaledHeight() - 49;
-
-                // filled droplets
-                int droplets;
-                boolean half = false;
-
-                if (hydration % 2 == 1) {
-                    droplets = (hydration - 1) / 2;
-                    half = true;
-                } else {
-                    droplets = hydration / 2;
-                }
-
-                rand.setSeed(ticks * 312871);
-
-                // render droplets
-                for (int i = 0; i < 10; i++) {
-
-                    // hydration bar shaking when saturation is gone
-                    if (cap.getHydrationSaturation() <= 0.0F && ticks % (cap.getHydration() * 3 + 1) == 0) {
-                        hydrationPosY = (mc.getMainWindow().getScaledHeight() - 49) + (rand.nextInt(3) - 1);
+                    if (player.isPotionActive(ModEffects.DEHYDRATION.get())) {
+                        DROPLET_FULL.x = 9 + 18;
+                        DROPLET_HALF.x = 18 + 18;
+                    } else {
+                        DROPLET_FULL.x = 9;
+                        DROPLET_HALF.x = 18;
                     }
 
-                    // render empty droplet
-                    mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height);
+                    mc.getTextureManager().bindTexture(HYDRATION_ICONS);
 
-                    // render filled droplets
-                    if (half && droplets == (9 - i)) {
-                        // render half droplet
-                        mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height);
-                    } else if (droplets >= (10 - i)) {
-                        // render full droplet
-                        mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height);
+                    IHydration cap = Hydration.getFromPlayer(player);
+                    int hydration = cap.getHydration();
+
+                    // hydration bar position
+                    int hydrationPosX = mc.getMainWindow().getScaledWidth() / 2 + 10;
+                    int hydrationPosY = mc.getMainWindow().getScaledHeight() - 49;
+
+                    // filled droplets
+                    int droplets;
+                    boolean half = false;
+
+                    if (hydration % 2 == 1) {
+                        droplets = (hydration - 1) / 2;
+                        half = true;
+                    } else {
+                        droplets = hydration / 2;
                     }
-                    hydrationPosX += (DROPLET_EMPTY.width - 1);
+
+                    rand.setSeed(ticks * 312871);
+
+                    // render droplets
+                    for (int i = 0; i < 10; i++) {
+
+                        // hydration bar shaking when saturation is gone
+                        if (cap.getHydrationSaturation() <= 0.0F && ticks % (cap.getHydration() * 3 + 1) == 0) {
+                            hydrationPosY = (mc.getMainWindow().getScaledHeight() - 49) + (rand.nextInt(3) - 1);
+                        }
+
+                        // render empty droplet
+                        mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_EMPTY.x, DROPLET_EMPTY.y, DROPLET_EMPTY.width, DROPLET_EMPTY.height);
+
+                        // render filled droplets
+                        if (half && droplets == (9 - i)) {
+                            // render half droplet
+                            mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_HALF.x, DROPLET_HALF.y, DROPLET_HALF.width, DROPLET_HALF.height);
+                        } else if (droplets >= (10 - i)) {
+                            // render full droplet
+                            mc.ingameGUI.blit(matrixStack, hydrationPosX, hydrationPosY, DROPLET_FULL.x, DROPLET_FULL.y, DROPLET_FULL.width, DROPLET_FULL.height);
+                        }
+                        hydrationPosX += (DROPLET_EMPTY.width - 1);
+                    }
                 }
             }
         }

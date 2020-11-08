@@ -2,6 +2,7 @@ package net.tieso2001.quenched;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -9,6 +10,7 @@ import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.HydrationStorage;
 import net.tieso2001.quenched.capability.entity.IHydration;
 import net.tieso2001.quenched.hydration.HydrationStatsManager;
+import net.tieso2001.quenched.init.ModEffects;
 import net.tieso2001.quenched.network.PacketHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +24,10 @@ public final class Quenched {
     private static final HydrationStatsManager hydrationStatsManager = new HydrationStatsManager();
 
     public Quenched() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        modEventBus.addListener(this::setup);
+        ModEffects.EFFECTS.register(modEventBus);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
