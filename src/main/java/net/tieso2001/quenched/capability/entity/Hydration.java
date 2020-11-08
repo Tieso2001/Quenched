@@ -3,14 +3,18 @@ package net.tieso2001.quenched.capability.entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.Difficulty;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.tieso2001.quenched.entity.player.CustomFoodStats;
-import net.tieso2001.quenched.init.ModEffects;
+import net.tieso2001.quenched.init.ModConfig;
 import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.HydrationPacket;
+
+import java.util.List;
 
 public class Hydration implements IHydration {
 
@@ -104,9 +108,17 @@ public class Hydration implements IHydration {
                 CustomFoodStats foodStats = (CustomFoodStats) player.getFoodStats();
                 foodStats.setFoodHealthRegen(false);
             }
-            player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 5, 0, false, false));
-            player.addPotionEffect(new EffectInstance(Effects.WEAKNESS, 5, 0, false, false));
-            player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 5, 0, false, false));
+            if (ModConfig.COMMON.enableDehydratedEffects.get()) {
+                List<String> effectsIds = ModConfig.COMMON.dehydratedEffectsList.get();
+                if (effectsIds.size() > 0) {
+                    for (String effectId : effectsIds) {
+                        Effect effect = ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectId));
+                        if (effect != null) {
+                            reapplyEffect(player, effect);
+                        }
+                    }
+                }
+            }
             if (cap.getHydration() <= 0) {
                 cap.setHydrationTimer(cap.getHydrationTimer() + 1);
                 if (cap.getHydrationTimer() >= 80) {
@@ -122,6 +134,17 @@ public class Hydration implements IHydration {
                 foodStats.setFoodHealthRegen(true);
             }
             cap.setHydrationTimer(0);
+        }
+    }
+
+    private static void reapplyEffect(PlayerEntity player, Effect effect) {
+        EffectInstance effectInstance = player.getActivePotionEffect(effect);
+        if (effectInstance != null) {
+            if (effectInstance.getDuration() <= 20) {
+                player.addPotionEffect(new EffectInstance(effect, 80, 0, false, false));
+            }
+        } else {
+            player.addPotionEffect(new EffectInstance(effect, 80, 0, false, false));
         }
     }
 }
