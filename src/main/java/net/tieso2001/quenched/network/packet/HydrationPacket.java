@@ -1,6 +1,7 @@
 package net.tieso2001.quenched.network.packet;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -36,10 +37,13 @@ public class HydrationPacket {
 
     public static void handle(HydrationPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity player = (PlayerEntity) Minecraft.getInstance().world.getEntityByID(packet.nbt.getInt(ENTITY_ID_TAG));
-            if (player != null) {
-                IHydration cap = Hydration.getFromPlayer(player);
-                HydrationProvider.PLAYER_HYDRATION.readNBT(cap, null, packet.nbt);
+            ClientWorld world = Minecraft.getInstance().world;
+            if (world != null) {
+                PlayerEntity player = (PlayerEntity) world.getEntityByID(packet.nbt.getInt(ENTITY_ID_TAG));
+                if (player != null) {
+                    IHydration cap = Hydration.getFromPlayer(player);
+                    HydrationProvider.PLAYER_HYDRATION.readNBT(cap, null, packet.nbt);
+                }
             }
         });
         ctx.get().setPacketHandled(true);

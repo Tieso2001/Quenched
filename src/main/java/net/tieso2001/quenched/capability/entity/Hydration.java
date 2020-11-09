@@ -15,6 +15,7 @@ import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.HydrationPacket;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Hydration implements IHydration {
 
@@ -88,7 +89,7 @@ public class Hydration implements IHydration {
     }
 
     public static void updateClient(ServerPlayerEntity player, IHydration cap) {
-        PacketHandler.sendTo(player, new HydrationPacket(player.getEntityId(), (CompoundNBT) HydrationProvider.PLAYER_HYDRATION.writeNBT(cap, null)));
+        PacketHandler.sendToClient(player, new HydrationPacket(player.getEntityId(), (CompoundNBT) Objects.requireNonNull(HydrationProvider.PLAYER_HYDRATION.writeNBT(cap, null))));
     }
 
     public static void tick(PlayerEntity player) {

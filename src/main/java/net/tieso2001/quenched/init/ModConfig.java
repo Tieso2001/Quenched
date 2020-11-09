@@ -20,6 +20,7 @@ public class ModConfig {
     public static class Common {
         public final ForgeConfigSpec.BooleanValue enableDehydratedEffects;
         public final ForgeConfigSpec.ConfigValue<List<String>> dehydratedEffectsList;
+        public final ForgeConfigSpec.BooleanValue enableDirectFluidDrinking;
 
         public Common(ForgeConfigSpec.Builder builder) {
             enableDehydratedEffects = builder
@@ -28,6 +29,9 @@ public class ModConfig {
             dehydratedEffectsList = builder
                     .comment("List of potion effects which are applied when dehydrated, default = [\"minecraft:slowness\", \"minecraft:weakness\", \"minecraft:mining_fatigue\"]")
                     .define("dehydrated_effects_list", Arrays.asList("minecraft:slowness", "minecraft:weakness", "minecraft:mining_fatigue"));
+            enableDirectFluidDrinking = builder
+                    .comment("Allows players to drink from fluid sources with shift + rightclick, default = true")
+                    .define("enable_direct_fluid_drinking", true);
         }
     }
 }
