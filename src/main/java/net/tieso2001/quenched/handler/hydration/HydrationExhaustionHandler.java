@@ -77,8 +77,10 @@ public class HydrationExhaustionHandler {
         World world = player.world;
         if (!world.isRemote) {
             if (!event.isCanceled()) {
-                IHydration cap = Hydration.getFromPlayer(player);
-                cap.addHydrationExhaustion(0.005F);
+                if (!player.abilities.disableDamage) {
+                    IHydration cap = Hydration.getFromPlayer(player);
+                    cap.addHydrationExhaustion(0.005F);
+                }
             }
         }
     }

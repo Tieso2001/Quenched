@@ -1,19 +1,27 @@
 package net.tieso2001.quenched.hydration;
 
-public class ItemHydrationStat {
+import javax.annotation.Nullable;
 
+public class HydrationStat {
+
+    private final HydrationStatType type;
     private final String id;
     private final String tagName;
     private final String tagValue;
     private final int hydration;
     private final float hydrationSaturation;
 
-    public ItemHydrationStat(String id, String tagName, String tagValue, int hydration, float hydrationSaturation) {
+    public HydrationStat(HydrationStatType type, String id, @Nullable String tagName, @Nullable String tagValue, int hydration, float hydrationSaturation) {
+        this.type = type;
         this.id = id;
         this.tagName = tagName;
         this.tagValue = tagValue;
         this.hydration = hydration;
         this.hydrationSaturation = hydrationSaturation;
+    }
+
+    public HydrationStatType getType() {
+        return type;
     }
 
     public String getId() {

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 import net.minecraft.client.resources.JsonReloadListener;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -21,7 +22,8 @@ public class HydrationStatsManager extends JsonReloadListener {
 
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
-    private Map<ItemStack, ItemHydrationStat> itemHydrationStats = ImmutableMap.of();
+    private Map<ItemStack, HydrationStat> itemHydrationStats = ImmutableMap.of();
+    private Map<Fluid, HydrationStat> fluidHydrationStats = ImmutableMap.of();
 
     public HydrationStatsManager() {
         super(GSON, "quenched");
@@ -29,32 +31,54 @@ public class HydrationStatsManager extends JsonReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
-        Map<ItemStack, ItemHydrationStat> map = Maps.newHashMap();
+        Map<ItemStack, HydrationStat> itemMap = Maps.newHashMap();
+        Map<Fluid, HydrationStat> fluidMap = Maps.newHashMap();
         objectIn.forEach((resourceLocation, jsonElement) -> {
             try {
-                ItemHydrationStat stat = deserializeHydrationItem(jsonElement);
-                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(stat.getId()));
-                if (item == null) {
-                    Quenched.LOGGER.warn(String.format("Could not find item corresponding to hydration stat %s! Skipping...", resourceLocation));
+                HydrationStat stat = deserializeHydrationItem(jsonElement);
+                if (stat == null) {
+                    Quenched.LOGGER.warn(String.format("Failed to deserialize hydration stat \"%s\"! Skipping...", resourceLocation));
                     return;
                 }
-                ItemStack stack = new ItemStack(item);
-                if (stat.hasTag()) {
-                    CompoundNBT tag = Util.make(new CompoundNBT(), (nbt) -> nbt.putString(stat.getTagName(), stat.getTagValue()));
-                    stack.setTag(tag);
+                if (stat.getType().isItemType()) {
+                    Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(stat.getId()));
+                    if (item == null) {
+                        Quenched.LOGGER.warn(String.format("Could not find item corresponding to hydration stat \"%s\"! Skipping...", resourceLocation));
+                        return;
+                    }
+                    ItemStack stack = new ItemStack(item);
+                    if (stat.hasTag()) {
+                        CompoundNBT tag = Util.make(new CompoundNBT(), (nbt) -> nbt.putString(stat.getTagName(), stat.getTagValue()));
+                        stack.setTag(tag);
+                    }
+                    itemMap.put(stack, stat);
                 }
-                map.put(stack, stat);
+                else if (stat.getType().isFluidType()) {
+                    Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(stat.getId()));
+                    if (fluid == null) {
+                        Quenched.LOGGER.warn(String.format("Could not find fluid corresponding to hydration stat \"%s\"! Skipping...", resourceLocation));
+                        return;
+                    }
+                    fluidMap.put(fluid, stat);
+                }
             } catch (IllegalArgumentException | JsonParseException ignored) {
-                Quenched.LOGGER.warn(String.format("Failed to parse %s as a hydration stat! Skipping...", resourceLocation));
+                Quenched.LOGGER.warn(String.format("Failed to parse \"%s\" as a hydration stat! Skipping...", resourceLocation));
             }
         });
-        itemHydrationStats = map;
+        itemHydrationStats = itemMap;
+        fluidHydrationStats = fluidMap;
     }
 
-    private static ItemHydrationStat deserializeHydrationItem(JsonElement jsonElement) {
+    private static HydrationStat deserializeHydrationItem(JsonElement jsonElement) {
         JsonObject json = (JsonObject) jsonElement;
 
-        String id = JSONUtils.getString(json, "item");
+        String typeId = JSONUtils.getString(json, "type");
+        HydrationStatType type = getType(typeId);
+        if (type == null) {
+            return null;
+        }
+
+        String id = JSONUtils.getString(json, "id");
 
         String tagName = null;
         String tagValue = null;
@@ -67,40 +91,68 @@ public class HydrationStatsManager extends JsonReloadListener {
         int hydration = JSONUtils.getInt(json, "hydration");
         float hydrationSaturation = JSONUtils.getFloat(json, "hydrationSaturation");
 
-        return new ItemHydrationStat(id, tagName, tagValue, hydration, hydrationSaturation);
+        return new HydrationStat(type, id, tagName, tagValue, hydration, hydrationSaturation);
     }
 
-    public Map<ItemStack, ItemHydrationStat> getAllItemHydrationStats() {
+    private static HydrationStatType getType(String type) {
+        switch (type) {
+            case (Quenched.MOD_ID + ":" + "hydration_stat_item"):
+                return HydrationStatType.ITEM;
+            case (Quenched.MOD_ID + ":" + "hydration_stat_fluid"):
+                return HydrationStatType.FLUID;
+            default:
+                return null;
+        }
+    }
+
+    public Map<ItemStack, HydrationStat> getAllItemHydrationStats() {
         return this.itemHydrationStats;
     }
 
+    public Map<Fluid, HydrationStat> getAllFluidHydrationStats() {
+        return this.fluidHydrationStats;
+    }
+
     public boolean hasHydrationStat(ItemStack stack) {
+        ItemStack key = getKey(stack);
+        return key != null;
+    }
+
+    public HydrationStat getHydrationStat(ItemStack stack) {
+        ItemStack key = getKey(stack);
+        return getAllItemHydrationStats().get(key);
+    }
+
+    private ItemStack getKey(ItemStack stack) {
         for (ItemStack key : getAllItemHydrationStats().keySet()) {
-            ItemHydrationStat stat = getAllItemHydrationStats().get(key);
+            HydrationStat stat = getAllItemHydrationStats().get(key);
             if (key.isItemEqual(stack)) {
                 if (key.hasTag() && stack.hasTag()) { // key has no tag but has capNBT
                     if (stack.getTag().getString(stat.getTagName()).equals(stat.getTagValue())) {
-                        return true;
+                        return key;
                     }
                 } else if (!key.hasTag()) {
-                    return true;
+                    return key;
                 }
             }
         }
-        return false;
+        return null;
     }
 
-    public ItemHydrationStat getItemHydrationStat(ItemStack stack) {
-        for (ItemStack key : getAllItemHydrationStats().keySet()) {
-            ItemHydrationStat stat = getAllItemHydrationStats().get(key);
-            if (key.isItemEqual(stack)) {
-                if (key.hasTag() && stack.hasTag()) {
-                    if (stack.getTag().getString(stat.getTagName()).equals(stat.getTagValue())) {
-                        return getAllItemHydrationStats().get(key);
-                    }
-                } else if (!key.hasTag()) {
-                    return getAllItemHydrationStats().get(key);
-                }
+    public boolean hasHydrationStat(Fluid fluid) {
+        Fluid key = getKey(fluid);
+        return key != null;
+    }
+
+    public HydrationStat getHydrationStat(Fluid fluid) {
+        Fluid key = getKey(fluid);
+        return getAllFluidHydrationStats().get(key);
+    }
+
+    private Fluid getKey(Fluid fluid) {
+        for (Fluid key : getAllFluidHydrationStats().keySet()) {
+            if (key.isEquivalentTo(fluid)) {
+                return key;
             }
         }
         return null;

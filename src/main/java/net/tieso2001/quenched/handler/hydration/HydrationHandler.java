@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.tieso2001.quenched.Quenched;
 import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.IHydration;
-import net.tieso2001.quenched.hydration.ItemHydrationStat;
+import net.tieso2001.quenched.hydration.HydrationStat;
 import net.tieso2001.quenched.init.ModConfig;
 import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.DrinkFluidPacket;
@@ -38,17 +38,11 @@ public class HydrationHandler {
 
                 ItemStack stack = event.getItem();
 
-                int hydration = 0;
-                float hydrationSaturation = 0.0F;
-
                 if (Quenched.getHydrationStatsManager().hasHydrationStat(stack)) {
-                    ItemHydrationStat stat = Quenched.getHydrationStatsManager().getItemHydrationStat(stack);
-                    hydration = stat.getHydration();
-                    hydrationSaturation = stat.getHydrationSaturation();
+                    HydrationStat stat = Quenched.getHydrationStatsManager().getHydrationStat(stack);
+                    cap.addStats(stat.getHydration(), stat.getHydrationSaturation());
+                    Hydration.updateClient((ServerPlayerEntity) player, cap);
                 }
-
-                cap.addStats(hydration, hydrationSaturation);
-                Hydration.updateClient((ServerPlayerEntity) player, cap);
             }
         }
     }
@@ -56,16 +50,15 @@ public class HydrationHandler {
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (ModConfig.COMMON.enableDirectFluidDrinking.get()) {
-            int hydration = 2;
-            float hydrationSaturation = 0.0F;
-
             PlayerEntity player = event.getPlayer();
 
-            if (canDrinkFromFluid(event.getWorld(), player, event.getHand(), hydration, hydrationSaturation)) {
+            if (canDrinkFromFluid(event.getWorld(), player, event.getHand())) {
                 player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.5F, event.getWorld().rand.nextFloat() * 0.1F + 0.9F);
                 if (!event.getWorld().isRemote) {
+                    Fluid fluid = getDrinkFluid(event.getWorld(), player);
+                    HydrationStat stat = Quenched.getHydrationStatsManager().getHydrationStat(fluid);
                     IHydration cap = Hydration.getFromPlayer(player);
-                    cap.addStats(hydration, hydrationSaturation);
+                    cap.addStats(stat.getHydration(), stat.getHydrationSaturation());
                 }
             }
         }
@@ -74,39 +67,45 @@ public class HydrationHandler {
     @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
         if (ModConfig.COMMON.enableDirectFluidDrinking.get()) {
-            int hydration = 2;
-            float hydrationSaturation = 0.0F;
-
             PlayerEntity player = event.getPlayer();
 
-            if (canDrinkFromFluid(event.getWorld(), player, event.getHand(), hydration, hydrationSaturation)) {
+            if (canDrinkFromFluid(event.getWorld(), player, event.getHand())) {
                 player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.5F, event.getWorld().rand.nextFloat() * 0.1F + 0.9F);
-                PacketHandler.sendToServer(new DrinkFluidPacket(hydration, hydrationSaturation, new CompoundNBT()));
+                Fluid fluid = getDrinkFluid(event.getWorld(), player);
+                HydrationStat stat = Quenched.getHydrationStatsManager().getHydrationStat(fluid);
+                PacketHandler.sendToServer(new DrinkFluidPacket(stat.getHydration(), stat.getHydrationSaturation(), new CompoundNBT()));
             }
         }
     }
 
-    private static boolean canDrinkFromFluid(World world, PlayerEntity player, Hand hand, int hydrationValue, float saturationValue) {
+    private static Fluid getDrinkFluid(World world, PlayerEntity player) {
+        BlockRayTraceResult raytraceResult = rayTrace(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
+        if (raytraceResult.getType() == RayTraceResult.Type.BLOCK) {
+            BlockPos blockPos = raytraceResult.getPos();
+            BlockState blockState = world.getBlockState(blockPos);
+            return blockState.getFluidState().getFluid();
+        }
+        return Fluids.EMPTY;
+    }
+
+    private static boolean canDrinkFromFluid(World world, PlayerEntity player, Hand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
 
         if (heldItem.isEmpty() && player.isSneaking() && hand == Hand.MAIN_HAND) {
 
-            BlockRayTraceResult raytraceResult = rayTrace(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
+            Fluid fluid = getDrinkFluid(world, player);
 
-            if (raytraceResult.getType() == RayTraceResult.Type.BLOCK) {
+            if (Quenched.getHydrationStatsManager().hasHydrationStat(fluid)) {
+                HydrationStat stat = Quenched.getHydrationStatsManager().getHydrationStat(fluid);
+                int hydrationValue = stat.getHydration();
+                float saturationValue = stat.getHydrationSaturation();
 
-                BlockPos blockPos = raytraceResult.getPos();
-                BlockState blockState = world.getBlockState(blockPos);
-                Fluid fluid = blockState.getFluidState().getFluid();
+                IHydration cap = Hydration.getFromPlayer(player);
 
-                if (fluid == Fluids.WATER) {
-                    IHydration cap = Hydration.getFromPlayer(player);
+                int newHydration = Math.min(Math.max(cap.getHydration() + hydrationValue, 0), Hydration.MAX_HYDRATION);
+                float newHydrationSaturation = Math.max(Math.min(cap.getHydrationSaturation() + saturationValue, (float) cap.getHydration()), 0.0F);
 
-                    int newHydration = Math.min(Math.max(cap.getHydration() + hydrationValue, 0), Hydration.MAX_HYDRATION);
-                    float newHydrationSaturation = Math.max(Math.min(cap.getHydrationSaturation() + saturationValue, (float) cap.getHydration()), 0.0F);
-
-                    return cap.getHydration() != newHydration || cap.getHydrationSaturation() != newHydrationSaturation;
-                }
+                return cap.getHydration() != newHydration || cap.getHydrationSaturation() != newHydrationSaturation;
             }
         }
         return false;

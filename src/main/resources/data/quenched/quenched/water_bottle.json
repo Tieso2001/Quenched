@@ -1,9 +1,10 @@
 {
-  "item": "minecraft:potion",
+  "type": "quenched:hydration_stat_item",
+  "id": "minecraft:potion",
   "tag": {
     "tagname": "Potion",
     "value": "minecraft:water"
   },
-  "hydration": -4,
+  "hydration": 8,
   "hydrationSaturation": 8
 }
