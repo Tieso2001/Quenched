@@ -20,7 +20,7 @@ import net.tieso2001.quenched.Quenched;
 import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.IHydration;
 import net.tieso2001.quenched.hydration.HydrationStat;
-import net.tieso2001.quenched.init.ModConfig;
+import net.tieso2001.quenched.config.Config;
 import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.DrinkFluidPacket;
 
@@ -49,7 +49,7 @@ public class HydrationHandler {
 
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (ModConfig.COMMON.enableDirectFluidDrinking.get()) {
+        if (Config.enableDirectFluidDrinking.get()) {
             PlayerEntity player = event.getPlayer();
 
             if (canDrinkFromFluid(event.getWorld(), player, event.getHand())) {
@@ -66,7 +66,7 @@ public class HydrationHandler {
 
     @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
-        if (ModConfig.COMMON.enableDirectFluidDrinking.get()) {
+        if (Config.enableDirectFluidDrinking.get()) {
             PlayerEntity player = event.getPlayer();
 
             if (canDrinkFromFluid(event.getWorld(), player, event.getHand())) {

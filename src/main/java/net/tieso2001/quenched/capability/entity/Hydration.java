@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.tieso2001.quenched.entity.player.CustomFoodStats;
-import net.tieso2001.quenched.init.ModConfig;
+import net.tieso2001.quenched.config.Config;
 import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.HydrationPacket;
 
@@ -109,8 +109,8 @@ public class Hydration implements IHydration {
                 CustomFoodStats foodStats = (CustomFoodStats) player.getFoodStats();
                 foodStats.setFoodHealthRegen(false);
             }
-            if (ModConfig.COMMON.enableDehydratedEffects.get()) {
-                List<String> effectsIds = ModConfig.COMMON.dehydratedEffectsList.get();
+            if (Config.enableDehydratedEffects.get()) {
+                List<String> effectsIds = Config.dehydratedEffectsList.get();
                 if (effectsIds.size() > 0) {
                     for (String effectId : effectsIds) {
                         Effect effect = ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectId));

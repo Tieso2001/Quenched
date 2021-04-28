@@ -12,6 +12,7 @@ import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.HydrationStorage;
 import net.tieso2001.quenched.capability.entity.IHydration;
 import net.tieso2001.quenched.hydration.HydrationStatsManager;
+import net.tieso2001.quenched.config.Config;
 import net.tieso2001.quenched.init.ModEffects;
 import net.tieso2001.quenched.network.PacketHandler;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +33,7 @@ public final class Quenched {
         ModEffects.EFFECTS.register(modEventBus);
         MinecraftForge.EVENT_BUS.register(this);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, net.tieso2001.quenched.init.ModConfig.COMMON_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
