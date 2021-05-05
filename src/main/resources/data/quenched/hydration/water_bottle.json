@@ -10,6 +10,6 @@
       "nbt": "{Potion:\"water\"}"
     }
   ],
-  "hydration": 1,
-  "hydration_saturation": 0
+  "hydration": 6,
+  "hydration_saturation": 0.6
 }
