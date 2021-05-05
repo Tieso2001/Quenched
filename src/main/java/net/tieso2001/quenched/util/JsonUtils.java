@@ -44,4 +44,18 @@ public class JsonUtils {
         stack.setTag(compoundnbt);
         return stack;
     }
+
+    public static JsonElement serializeIngredientWithNBT(Ingredient ingredient) {
+        JsonElement ingredientElement = ingredient.serialize();
+        if (ingredientElement.isJsonArray()) {
+            for (int i = 0; i < ingredientElement.getAsJsonArray().size(); i++) {
+                JsonElement element = ingredientElement.getAsJsonArray().get(i);
+                ItemStack stack = ingredient.getMatchingStacks()[i];
+                if (stack.getTag() != null) {
+                    element.getAsJsonObject().addProperty("nbt", stack.getTag().getString());
+                }
+            }
+        }
+        return ingredientElement;
+    }
 }
