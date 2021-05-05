@@ -1,0 +1,15 @@
+{
+  "type": "quenched:hydration_item",
+  "ingredient": [
+    {
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"minecraft:water\"}"
+    },
+    {
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"water\"}"
+    }
+  ],
+  "hydration": 1,
+  "hydration_saturation": 0
+}

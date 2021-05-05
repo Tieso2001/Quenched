@@ -19,8 +19,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.tieso2001.quenched.Quenched;
 import net.tieso2001.quenched.capability.entity.Hydration;
 import net.tieso2001.quenched.capability.entity.IHydration;
-import net.tieso2001.quenched.hydration.HydrationStat;
 import net.tieso2001.quenched.config.Config;
+import net.tieso2001.quenched.hydration.HydrationFluidInfo;
+import net.tieso2001.quenched.hydration.HydrationItemInfo;
 import net.tieso2001.quenched.network.PacketHandler;
 import net.tieso2001.quenched.network.packet.DrinkFluidPacket;
 
@@ -38,9 +39,9 @@ public class HydrationHandler {
 
                 ItemStack stack = event.getItem();
 
-                if (Quenched.getHydrationStatsManager().hasHydrationStat(stack)) {
-                    HydrationStat stat = Quenched.getHydrationStatsManager().getHydrationStat(stack);
-                    cap.addStats(stat.getHydration(), stat.getHydrationSaturation());
+                if (Quenched.HYDRATION_INFO_MANAGER.hasHydration(stack)) {
+                    HydrationItemInfo hydrationItemInfo = Quenched.HYDRATION_INFO_MANAGER.getHydrationFromStack(stack);
+                    cap.addStats(hydrationItemInfo.getHydration(), hydrationItemInfo.getHydrationSaturation());
                     Hydration.updateClient((ServerPlayerEntity) player, cap);
                 }
             }
@@ -56,9 +57,9 @@ public class HydrationHandler {
                 player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.5F, event.getWorld().rand.nextFloat() * 0.1F + 0.9F);
                 if (!event.getWorld().isRemote) {
                     Fluid fluid = getDrinkFluid(event.getWorld(), player);
-                    HydrationStat stat = Quenched.getHydrationStatsManager().getHydrationStat(fluid);
+                    HydrationFluidInfo hydrationFluidInfo = Quenched.HYDRATION_INFO_MANAGER.getHydrationFromFluid(fluid);
                     IHydration cap = Hydration.getFromPlayer(player);
-                    cap.addStats(stat.getHydration(), stat.getHydrationSaturation());
+                    cap.addStats(hydrationFluidInfo.getHydration(), hydrationFluidInfo.getHydrationSaturation());
                 }
             }
         }
@@ -72,8 +73,8 @@ public class HydrationHandler {
             if (canDrinkFromFluid(event.getWorld(), player, event.getHand())) {
                 player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.5F, event.getWorld().rand.nextFloat() * 0.1F + 0.9F);
                 Fluid fluid = getDrinkFluid(event.getWorld(), player);
-                HydrationStat stat = Quenched.getHydrationStatsManager().getHydrationStat(fluid);
-                PacketHandler.sendToServer(new DrinkFluidPacket(stat.getHydration(), stat.getHydrationSaturation(), new CompoundNBT()));
+                HydrationFluidInfo hydrationFluidInfo = Quenched.HYDRATION_INFO_MANAGER.getHydrationFromFluid(fluid);
+                PacketHandler.sendToServer(new DrinkFluidPacket(hydrationFluidInfo.getHydration(), hydrationFluidInfo.getHydrationSaturation(), new CompoundNBT()));
             }
         }
     }
@@ -95,8 +96,8 @@ public class HydrationHandler {
 
             Fluid fluid = getDrinkFluid(world, player);
 
-            if (Quenched.getHydrationStatsManager().hasHydrationStat(fluid)) {
-                HydrationStat stat = Quenched.getHydrationStatsManager().getHydrationStat(fluid);
+            if (Quenched.HYDRATION_INFO_MANAGER.hasHydration(fluid)) {
+                HydrationFluidInfo stat = Quenched.HYDRATION_INFO_MANAGER.getHydrationFromFluid(fluid);
                 int hydrationValue = stat.getHydration();
                 float saturationValue = stat.getHydrationSaturation();
 

@@ -1,0 +1,8 @@
+{
+  "type": "quenched:hydration_item",
+  "ingredient": {
+    "item": "minecraft:apple"
+  },
+  "hydration": 1,
+  "hydration_saturation": 0.1
+}
