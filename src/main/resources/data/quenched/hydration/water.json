@@ -1,6 +1,0 @@
-{
-  "type": "quenched:hydration_fluid",
-  "fluid": "minecraft:water",
-  "hydration": 2,
-  "hydration_saturation": 0.3
-}

@@ -6,7 +6,6 @@ import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.tieso2001.quenched.Quenched;
-import net.tieso2001.quenched.network.packet.DrinkFluidPacket;
 import net.tieso2001.quenched.network.packet.HydrationPacket;
 
 public class PacketHandler {
@@ -22,7 +21,6 @@ public class PacketHandler {
     public static void register() {
         int id = 0;
         INSTANCE.registerMessage(id++, HydrationPacket.class, HydrationPacket::encode, HydrationPacket::decode, HydrationPacket::handle);
-        INSTANCE.registerMessage(id++, DrinkFluidPacket.class, DrinkFluidPacket::encode, DrinkFluidPacket::decode, DrinkFluidPacket::handle);
     }
 
     public static void sendToClient(ServerPlayerEntity player, Object packet) {

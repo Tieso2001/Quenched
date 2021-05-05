@@ -1,13 +1,13 @@
 package net.tieso2001.quenched.util;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.JSONUtils;
+import net.tieso2001.quenched.Quenched;
 
 public class JsonUtils {
 
@@ -21,7 +21,7 @@ public class JsonUtils {
                     try {
                         addNBTtoStack(stack, element);
                     } catch (CommandSyntaxException commandsyntaxexception) {
-                        throw new JsonSyntaxException("Invalid nbt tag: " + commandsyntaxexception.getMessage());
+                        Quenched.LOGGER.error("Failed to add nbt tag to ingredient {}:" + commandsyntaxexception.getMessage(), stack.getItem().getRegistryName());
                     }
                 }
             }
@@ -31,7 +31,7 @@ public class JsonUtils {
                     try {
                         addNBTtoStack(stack, ingredientElement);
                     } catch (CommandSyntaxException commandsyntaxexception) {
-                        throw new JsonSyntaxException("Invalid nbt tag: " + commandsyntaxexception.getMessage());
+                        Quenched.LOGGER.error("Failed to add nbt tag to ingredient {}:" + commandsyntaxexception.getMessage(), stack.getItem().getRegistryName());
                     }
                 }
             }

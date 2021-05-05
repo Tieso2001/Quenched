@@ -47,6 +47,7 @@ public class HydrationItemInfo {
         public JsonElement serialize(HydrationItemInfo src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
             object.add("ingredient", src.ingredient.serialize());
+            // add nbt tags to ingredients
             object.addProperty("hydration", src.hydration);
             object.addProperty("hydration_saturation", src.hydrationSaturation);
             return object;
